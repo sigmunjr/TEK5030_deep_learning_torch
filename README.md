@@ -1,1 +1,1 @@
-# TEK5030_deep_learning_torch
+# TEK5030 Deep Learning Torch
