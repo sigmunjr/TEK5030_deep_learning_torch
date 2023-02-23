@@ -118,13 +118,17 @@ def train_simple_net_cifar():
     print('seed', torch.seed())
     model = SimpleNet(num_classes=10).to(device)
 
-    #TODO: Create loss function "calculate_loss" and optmizer
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.0001)  # , lr=0.0005)
+    calculate_loss = torch.nn.CrossEntropyLoss()
 
     for epoch in range(NUM_EPOCHS):
         running_loss = 0.0
         cnt = 0
         tic = time.time()
 
+        if hasattr(model, "dropout"):
+            print('dropout training', model.dropout.training)
+            model.dropout.training = True
 
         for i, (img, label) in enumerate(train_dataloader):
             optimizer.zero_grad()
@@ -158,10 +162,14 @@ def train_simple_net_pets():
     train_data, test_data = get_oxford_dataset()
     train_dataloader = DataLoader(train_data, batch_size=32, shuffle=True)
     test_dataloader = DataLoader(test_data, batch_size=128, shuffle=False)
+    print('seed', torch.seed())
     model = SimpleNet(num_classes=2).to(device)
 
-    #TODO: Create loss function and optimizer
-
+    lr_map = {3: 0.0001}
+    # lr_map = {1: 0.0002, 3: 0.0001}
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)  # , lr=0.0005)
+    calculate_loss = torch.nn.CrossEntropyLoss()
+    print(len(train_data))
     acc_accum, loss_accum = run_test(model, test_dataloader, calculate_loss)
     print('TEST [%d, %5d] loss: %.3f, acc: %.3f' %
           (0, 0, loss_accum, acc_accum))
@@ -169,11 +177,21 @@ def train_simple_net_pets():
         running_loss = 0.0
         cnt = 0
         tic = time.time()
+        if epoch in lr_map:
+            for g in optimizer.param_groups:
+                g['lr'] = lr_map[epoch]
+
+        if hasattr(model, "dropout"):
+            print('dropout training', model.dropout.training)
+            model.dropout.training = True
 
         for i, (img, (seg_mask, label)) in enumerate(train_dataloader):
-
-            # TODO: Run model, calculate loss and optimize parameters
-
+            optimizer.zero_grad()
+            img, label = img.to(device), label.to(device)
+            out = model(img)
+            loss = calculate_loss(out, label)
+            loss.backward()
+            optimizer.step()
             running_loss += loss
             cnt += 1
             if i % 10 == 0:  # print every 10 mini-batches
