@@ -10,6 +10,14 @@ You also need jupyter, torch, scikit-learn and torchvision, which can be install
 pip3 install jupyter torch torchvision scikit-learn
 ```
 
+If you are using conda you can use:
+
+```
+conda install jupyter conda install jupyter torchvision pytorch-cuda=11.6 -c pytorch -c nvidia scikit-learn
+```
+
+If you have a MAC or have AMD GPU etc. you can get guidance on how to install at [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/). 
+
 then open the notebook with:
 
 ```
