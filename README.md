@@ -7,7 +7,7 @@ If you have a computer with a decent GPU I recommend running locally. You need p
 You also need jupyter, torch, scikit-learn and torchvision, which can be installed with:
 
 ```
-pip3 install jupyter torch torchvision scikti-learn
+pip3 install jupyter torch torchvision scikit-learn
 ```
 
 then open the notebook with:
